@@ -7,14 +7,14 @@ output: html_document
 Note: The data used in this notebook is from the Canadian Social Harmony Study by RA2 and Cause and Effect Marketing. The survey was internally funded by RA2 and Cause and Effect Marketing.
 
 ### Import data
-```{r}
+```{r, echo=FALSE}
 setwd("/Users/hanguyen/Documents/1. Projects/Data for good/Canadian Social Harmony Feb2021/Ha")
 dat<-read.csv("dfg_survey_responses.csv",header = T,row.names = 1)
 head(dat)
 ```
 
-### Load packages
-```{r}
+### Load packages: cluster, FactoMineR, factoextra
+```{r, echo=FALSE}
 library(cluster)
 library(FactoMineR)
 library(factoextra)
@@ -22,13 +22,13 @@ library(factoextra)
 
 
 # Data exploration
-```{r}
+```{r, echo=FALSE}
 str(dat)
 ```
 
 # Create new dataset 
 [levels=c("Not like me at all","Not like me","Somewhat like me","A little like me","Like me","Very much like me"),labels=c("1", "2", "3", "4", "5","6")]
-```{r}
+```{r, echo=FALSE}
 library(dplyr)
 dat.new <- dat %>%
   dplyr::mutate_at(c(22:41),funs(recode(.,"Not like me at all"=1,"Not like me"=2,"Somewhat like me"=3,"A little like me"=4,"Like me"=5,"Very much like me"=6)))
@@ -37,7 +37,7 @@ str(dat.new)
 ```
 
 ## Dataset for clusterization
-```{r}
+```{r, echo=FALSE}
 dat.clust<-dat.new[,c(2:4,6:21,22,23,31,32,33,41,
                     26,27,28,36,37,38,
                     24,25,34,35,
@@ -47,7 +47,7 @@ str(dat.clust)
 
 # 1. Clusterisation based on 20 value variables (hierachical clusterisation)
 Returning the optimal number of clusters is 2
-```{r}
+```{r, echo=FALSE}
 set.seed(123)
 hc <- agnes(dat.clust[,20:39], method = "ward")
 fviz_nbclust(dat.clust[,20:39],FUN=hcut,method="wss",k.max=10)
@@ -55,7 +55,7 @@ fviz_nbclust(dat.clust[,20:39],FUN=hcut,method="silhouette",k.max=10)
 ```
 
 Dataset with clusters
-```{r}
+```{r, echo=FALSE}
 sup_grp<-cutree(hc,k=2)
 dat.hc<-cbind(dat.clust,sup_grp)
 dat.hc$sup_grp<-as.factor(dat.hc$sup_grp)
@@ -64,202 +64,204 @@ summary(dat.hc)
 
 ## 1.1. Description of the 2 clusters by 20 value variables
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 plot(catdes(dat.hc[,c(20:39,43)],num.var=21)) # colored responses for p-value <= 0.01
 ```
+
 Note: The red color is for significantly positive associations between the clusters with responses, for example cluster 2 positively associated with responses of 5 and 6 for many SV questions, which means the proportions of participants chose these responses are significantly higher in the Cluster 2 than the global (averages)… The darker the color is, the smaller the p-value of the v-test is. From this, we can identify characteristics of each cluster and how the variables associated with each other.
+
 ### By statistical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.hc[,c(20:39,43)],num.var=21)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 plot(catdes(dat.hc[,c(20:39,43)],num.var=21,row.w = dat$WT))
 ```
 
 ### By statistical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.hc[,c(20:39,43)],num.var=21,row.w = dat$WT)
 ```
 
 ## 1.2. Description of the 2 clusters by demographic varibales
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 plot(catdes(dat.hc[,c(1:19,43)],num.var=20))
 ```
 
 ### By statistical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.hc[,c(1:19,43)],num.var=20)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 plot(catdes(dat.hc[,c(1:19,43)],num.var=20,row.w = dat$WT))
 ```
 
 ### By statistical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.hc[,c(1:19,43)],num.var=20,row.w = dat$WT)
 ```
 
 
 ## 1.3. Description of the 2 clusters by conflict varibales
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,2,2))
 plot(catdes(dat.hc[,40:43],num.var=4))
 ```
 
 ### By statistical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.hc[,40:43],num.var=4)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,2,2))
 plot(catdes(dat.hc[,40:43],num.var=4,row.w = dat$WT))
 ```
 
 ### By statistical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.hc[,40:43],num.var=4,row.w = dat$WT)
 ```
 
 # 2. Description of conflict 1 groups by other variables
 ## 2.1. By demographic varibles
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 plot(catdes(dat.clust[,c(1:19,40)],num.var=20))
 ```
 
 ### By statictical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(1:19,40)],num.var=20)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 plot(catdes(dat.clust[,c(1:19,40)],num.var=20, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(1:19,40)],num.var=20, row.w = dat$WT)
 ```
 
 
 ## 2.2. By value varibles
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 plot(catdes(dat.clust[,c(20:39,40)],num.var=21))
 ```
 ### By statictical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(20:39,40)],num.var=21)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 plot(catdes(dat.clust[,c(20:39,40)],num.var=21, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(20:39,40)],num.var=21, row.w = dat$WT)
 ```
 
 # 3. Description of conflict 2 groups by other variables
 ## 3.1. By demographic varibles
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 plot(catdes(dat.clust[,c(1:19,41)],num.var=20))
 ```
 
 ### By statictical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(1:19,41)],num.var=20)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 plot(catdes(dat.clust[,c(1:19,41)],num.var=20, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(1:19,41)],num.var=20, row.w = dat$WT)
 ```
 
 
 ## 3.2. By value varibles
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 plot(catdes(dat.clust[,c(20:39,41)],num.var=21))
 ```
 ### By statictical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(20:39,41)],num.var=21)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 plot(catdes(dat.clust[,c(20:39,41)],num.var=21, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(20:39,41)],num.var=21, row.w = dat$WT)
 ```
 
 # 4. Description of conflict 3 groups by other variables
 ## 4.1. By demographic varibles
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 plot(catdes(dat.clust[,c(1:19,42)],num.var=20))
 ```
 
 ### By statictical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(1:19,42)],num.var=20)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 plot(catdes(dat.clust[,c(1:19,42)],num.var=20, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(1:19,42)],num.var=20, row.w = dat$WT)
 ```
 
 ## 4.2. By value varibles
 ### By plots with unweighted data
-```{r}
+```{r, echo=FALSE}
 plot(catdes(dat.clust[,c(20:39,42)],num.var=21))
 ```
 ### By statictical results with unweighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(20:39,42)],num.var=21)
 ```
 
 ### By plots with weighted data
-```{r}
+```{r, echo=FALSE}
 plot(catdes(dat.clust[,c(20:39,42)],num.var=21, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r}
+```{r, echo=FALSE}
 catdes(dat.clust[,c(20:39,42)],num.var=21, row.w = dat$WT)
 ```
