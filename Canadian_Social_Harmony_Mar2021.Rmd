@@ -6,38 +6,38 @@ output: html_document
 ---
 Note: The data used in this notebook is from the Canadian Social Harmony Study by RA2 and Cause and Effect Marketing. The survey was internally funded by RA2 and Cause and Effect Marketing.
 
-### Import data
-```{r, echo=FALSE}
+```{r, echo=FALSE, results='hide'}
+# Import data
 setwd("/Users/hanguyen/Documents/1. Projects/Data for good/Canadian Social Harmony Feb2021/Ha")
 dat<-read.csv("dfg_survey_responses.csv",header = T,row.names = 1)
-head(dat)
-```
-
-### Load packages: cluster, FactoMineR, factoextra
-```{r, echo=FALSE}
-library(cluster)
-library(FactoMineR)
-library(factoextra)
-```
-
-
-# Data exploration
-```{r, echo=FALSE}
 str(dat)
 ```
 
-# Create new dataset 
-[levels=c("Not like me at all","Not like me","Somewhat like me","A little like me","Like me","Very much like me"),labels=c("1", "2", "3", "4", "5","6")]
-```{r, echo=FALSE}
+```{r, echo=FALSE, results='hide', warning=FALSE,, message=FALSE}
+# Load packages: cluster, FactoMineR, factoextra
+library(cluster)
+library(FactoMineR)
+library(factoextra)
 library(dplyr)
+```
+
+### Data exploration
+```{r, echo=FALSE, results='hide'}
+str(dat)
+```
+
+Note: Value variables (SV_01 to SV_20) were recoded as: [levels=c("Not like me at all","Not like me","Somewhat like me","A little like me","Like me","Very much like me"),labels=c("1", "2", "3", "4", "5","6")]
+```{r, echo=FALSE, warning=FALSE}
+### New dataset for analyses
+#library(dplyr)
 dat.new <- dat %>%
   dplyr::mutate_at(c(22:41),funs(recode(.,"Not like me at all"=1,"Not like me"=2,"Somewhat like me"=3,"A little like me"=4,"Like me"=5,"Very much like me"=6)))
 dat.new[,22:44]<-lapply(dat.new[,22:44],factor)
 str(dat.new)
 ```
 
-## Dataset for clusterization
-```{r, echo=FALSE}
+```{r, echo=FALSE, results='hide'}
+# Dataset for clusterization
 dat.clust<-dat.new[,c(2:4,6:21,22,23,31,32,33,41,
                     26,27,28,36,37,38,
                     24,25,34,35,
@@ -46,7 +46,7 @@ str(dat.clust)
 ```
 
 # 1. Clusterisation based on 20 value variables (hierachical clusterisation)
-Returning the optimal number of clusters is 2
+Returning the optimal number of clusters - 2 clusters.
 ```{r, echo=FALSE}
 set.seed(123)
 hc <- agnes(dat.clust[,20:39], method = "ward")
@@ -54,7 +54,7 @@ fviz_nbclust(dat.clust[,20:39],FUN=hcut,method="wss",k.max=10)
 fviz_nbclust(dat.clust[,20:39],FUN=hcut,method="silhouette",k.max=10)
 ```
 
-Dataset with clusters
+The dataset with clusters:
 ```{r, echo=FALSE}
 sup_grp<-cutree(hc,k=2)
 dat.hc<-cbind(dat.clust,sup_grp)
@@ -93,7 +93,7 @@ plot(catdes(dat.hc[,c(1:19,43)],num.var=20))
 ```
 
 ### By statistical results with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.hc[,c(1:19,43)],num.var=20)
 ```
 
@@ -104,7 +104,7 @@ plot(catdes(dat.hc[,c(1:19,43)],num.var=20,row.w = dat$WT))
 ```
 
 ### By statistical results with weighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.hc[,c(1:19,43)],num.var=20,row.w = dat$WT)
 ```
 
@@ -117,7 +117,7 @@ plot(catdes(dat.hc[,40:43],num.var=4))
 ```
 
 ### By statistical results with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.hc[,40:43],num.var=4)
 ```
 
@@ -128,7 +128,7 @@ plot(catdes(dat.hc[,40:43],num.var=4,row.w = dat$WT))
 ```
 
 ### By statistical results with weighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.hc[,40:43],num.var=4,row.w = dat$WT)
 ```
 
@@ -141,7 +141,7 @@ plot(catdes(dat.clust[,c(1:19,40)],num.var=20))
 ```
 
 ### By statictical results with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(1:19,40)],num.var=20)
 ```
 
@@ -152,18 +152,18 @@ plot(catdes(dat.clust[,c(1:19,40)],num.var=20, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(1:19,40)],num.var=20, row.w = dat$WT)
 ```
 
 
 ## 2.2. By value varibles
 ### By plots with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 plot(catdes(dat.clust[,c(20:39,40)],num.var=21))
 ```
 ### By statictical results with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(20:39,40)],num.var=21)
 ```
 
@@ -173,7 +173,7 @@ plot(catdes(dat.clust[,c(20:39,40)],num.var=21, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(20:39,40)],num.var=21, row.w = dat$WT)
 ```
 
@@ -186,7 +186,7 @@ plot(catdes(dat.clust[,c(1:19,41)],num.var=20))
 ```
 
 ### By statictical results with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(1:19,41)],num.var=20)
 ```
 
@@ -197,7 +197,7 @@ plot(catdes(dat.clust[,c(1:19,41)],num.var=20, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(1:19,41)],num.var=20, row.w = dat$WT)
 ```
 
@@ -208,7 +208,7 @@ catdes(dat.clust[,c(1:19,41)],num.var=20, row.w = dat$WT)
 plot(catdes(dat.clust[,c(20:39,41)],num.var=21))
 ```
 ### By statictical results with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(20:39,41)],num.var=21)
 ```
 
@@ -218,7 +218,7 @@ plot(catdes(dat.clust[,c(20:39,41)],num.var=21, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(20:39,41)],num.var=21, row.w = dat$WT)
 ```
 
@@ -231,7 +231,7 @@ plot(catdes(dat.clust[,c(1:19,42)],num.var=20))
 ```
 
 ### By statictical results with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(1:19,42)],num.var=20)
 ```
 
@@ -242,7 +242,7 @@ plot(catdes(dat.clust[,c(1:19,42)],num.var=20, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(1:19,42)],num.var=20, row.w = dat$WT)
 ```
 
@@ -252,7 +252,7 @@ catdes(dat.clust[,c(1:19,42)],num.var=20, row.w = dat$WT)
 plot(catdes(dat.clust[,c(20:39,42)],num.var=21))
 ```
 ### By statictical results with unweighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(20:39,42)],num.var=21)
 ```
 
@@ -262,6 +262,6 @@ plot(catdes(dat.clust[,c(20:39,42)],num.var=21, row.w = dat$WT))
 ```
 
 ### By statictical results with weighted data
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 catdes(dat.clust[,c(20:39,42)],num.var=21, row.w = dat$WT)
 ```
